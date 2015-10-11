@@ -757,11 +757,17 @@ class BHand:
 			@type data: sensor_msgs.JointState
 		'''
 		bingo = False
+		ignore_velocity = False
+		
+		if len(data.position) > len(data.velocity):
+			rospy.logwarn("elements in velocity array is small then in position array, ignore velocity values!")
+			ignore_velocity = True
 		
 		for i in range(len(data.name)):
 			if self.desired_joints_position.has_key(data.name[i]):
 				self.desired_joints_position[data.name[i]] = data.position[i]
-				self.desired_joints_velocity[data.name[i]] = data.velocity[i]
+				if not ignore_velocity:
+					self.desired_joints_velocity[data.name[i]] = data.velocity[i]
 				bingo = True
 				
 		
